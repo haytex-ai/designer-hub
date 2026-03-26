@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Designer Hub — Entergy Distribution</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2330;
+    --border: #2a3441;
+    --amber: #f0a500;
+    --amber-dim: #b87d00;
+    --amber-glow: rgba(240,165,0,0.12);
+    --green: #3fb950;
+    --blue: #388bfd;
+    --red: #f85149;
+    --purple: #bc8cff;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --text-dimmer: #4a5568;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Sora', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* Subtle grid texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.18;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 32px;
+    margin-bottom: 40px;
+  }
+
+  .header-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .header h1 {
+    font-family: var(--mono);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .header h1 span {
+    color: var(--amber);
+  }
+
+  .header-sub {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--text-dim);
+    font-weight: 300;
+    max-width: 520px;
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 20px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+
+  .meta-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .meta-pill.live {
+    color: var(--green);
+    border-color: rgba(63,185,80,0.3);
+    background: rgba(63,185,80,0.07);
+  }
+
+  /* ── SECTION LABELS ── */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── QUICK ACTIONS ── */
+  .quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 48px;
+  }
+
+  .qa-btn {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .qa-btn::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--amber);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .qa-btn:hover {
+    border-color: var(--amber);
+    background: var(--amber-glow);
+    transform: translateY(-1px);
+  }
+
+  .qa-btn:hover::before { opacity: 1; }
+
+  .qa-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .qa-text {
+    flex: 1;
+  }
+
+  .qa-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    display: block;
+  }
+
+  .qa-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 1px;
+  }
+
+  .qa-arrow {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--amber);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .qa-btn:hover .qa-arrow { opacity: 1; }
+
+  /* ── LIFECYCLE ── */
+  .lifecycle {
+    margin-bottom: 48px;
+  }
+
+  .lifecycle-track {
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .lc-step {
+    flex: 1;
+    min-width: 100px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-right: none;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+    position: relative;
+  }
+
+  .lc-step:first-child { border-radius: 8px 0 0 8px; }
+  .lc-step:last-child { border-radius: 0 8px 8px 0; border-right: 1px solid var(--border); }
+
+  .lc-step:hover {
+    background: var(--amber-glow);
+    border-color: var(--amber);
+    z-index: 2;
+  }
+
+  .lc-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--amber);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .lc-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .lc-sub {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin-top: 3px;
+    line-height: 1.3;
+  }
+
+  /* ── TWO COLUMN ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  @media (max-width: 640px) {
+    .two-col { grid-template-columns: 1fr; }
+    .lifecycle-track { flex-direction: column; }
+    .lc-step { border-right: 1px solid var(--border); border-bottom: none; border-radius: 0; }
+    .lc-step:first-child { border-radius: 8px 8px 0 0; }
+    .lc-step:last-child { border-radius: 0 0 8px 8px; border-bottom: 1px solid var(--border); }
+  }
+
+  /* ── LINK LISTS ── */
+  .link-list {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .ll-header {
+    padding: 12px 16px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ll-icon { font-size: 14px; }
+
+  .ll-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    transition: background 0.12s;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .ll-item:last-child { border-bottom: none; }
+
+  .ll-item:hover {
+    background: var(--amber-glow);
+  }
+
+  .ll-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--amber);
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+
+  .ll-item:hover .ll-dot { opacity: 1; }
+
+  .ll-name {
+    font-size: 12.5px;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .ll-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .tag-page { background: rgba(56,139,253,0.15); color: var(--blue); }
+  .tag-pdf  { background: rgba(248,81,73,0.12); color: var(--red); }
+  .tag-tool { background: rgba(188,140,255,0.12); color: var(--purple); }
+  .tag-new  { background: rgba(240,165,0,0.12); color: var(--amber); }
+  .tag-wip  { background: rgba(63,185,80,0.1); color: var(--green); }
+
+  /* ── TOOLS GRID ── */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 48px;
+  }
+
+  .tool-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+
+  .tool-card:hover {
+    border-color: var(--amber);
+    background: var(--amber-glow);
+  }
+
+  .tool-emoji {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+
+  .tool-name {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .tool-desc {
+    font-size: 10.5px;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  /* ── NOTICE BOX ── */
+  .notice {
+    background: var(--amber-glow);
+    border: 1px solid rgba(240,165,0,0.3);
+    border-left: 3px solid var(--amber);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 16px;
+    margin-bottom: 48px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .notice strong { color: var(--amber); font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em; }
+
+  /* ── ONBOARDING TRACK ── */
+  .onboarding-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 48px;
+  }
+
+  @media (max-width: 600px) { .onboarding-grid { grid-template-columns: 1fr; } }
+
+  .ob-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+
+  .ob-card:hover { border-color: var(--amber); background: var(--amber-glow); }
+
+  .ob-period {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--amber);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .ob-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .ob-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+    gap: 12px;
+  }
+
+  .footer-text {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dimmer);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 16px;
+  }
+
+  .footer-link {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.12s;
+  }
+
+  .footer-link:hover { color: var(--amber); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .header { animation: fadeUp 0.4s ease both; }
+  .quick-actions { animation: fadeUp 0.4s 0.1s ease both; }
+  .lifecycle { animation: fadeUp 0.4s 0.15s ease both; }
+  .two-col { animation: fadeUp 0.4s 0.2s ease both; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-eyebrow">⚡ Entergy Mississippi · Distribution Design</div>
+    <h1>Designer <span>Hub</span></h1>
+    <p class="header-sub">One place for every SOP, go-by, template, and standard a distribution designer needs — from day one to Design III.</p>
+    <div class="header-meta">
+      <span class="meta-pill live">● Live</span>
+      <span class="meta-pill">Jackson, MS</span>
+      <span class="meta-pill">DD1 – DD3 + Sup</span>
+      <span class="meta-pill">Last updated: [DATE]</span>
+    </div>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="section-label">Quick Start</div>
+  <div class="quick-actions">
+    <a class="qa-btn">
+      <span class="qa-icon">📋</span>
+      <span class="qa-text">
+        <span class="qa-title">Start a Job</span>
+        <span class="qa-desc">Job Intake Checklist</span>
+      </span>
+      <span class="qa-arrow">→</span>
+    </a>
+    <a class="qa-btn">
+      <span class="qa-icon">📍</span>
+      <span class="qa-text">
+        <span class="qa-title">Site Visit / Stake</span>
+        <span class="qa-desc">Site Visit Checklist</span>
+      </span>
+      <span class="qa-arrow">→</span>
+    </a>
+    <a class="qa-btn">
+      <span class="qa-icon">🗂️</span>
+      <span class="qa-text">
+        <span class="qa-title">Make a Work Order</span>
+        <span class="qa-desc">Maximo Designer Go-By</span>
+      </span>
+      <span class="qa-arrow">→</span>
+    </a>
+    <a class="qa-btn">
+      <span class="qa-icon">🔌</span>
+      <span class="qa-text">
+        <span class="qa-title">Padmount / UG Job</span>
+        <span class="qa-desc">Underground & Pad-Mount SOP</span>
+      </span>
+      <span class="qa-arrow">→</span>
+    </a>
+    <a class="qa-btn">
+      <span class="qa-icon">📚</span>
+      <span class="qa-text">
+        <span class="qa-title">CU Library</span>
+        <span class="qa-desc">Construction unit codes</span>
+      </span>
+      <span class="qa-arrow">→</span>
+    </a>
+    <a class="qa-btn">
+      <span class="qa-icon">✉️</span>
+      <span class="qa-text">
+        <span class="qa-title">Email Copy / Pasta</span>
+        <span class="qa-desc">Customer email templates</span>
+      </span>
+      <span class="qa-arrow">→</span>
+    </a>
+  </div>
+
+  <!-- JOB LIFECYCLE -->
+  <div class="lifecycle">
+    <div class="section-label">Job Lifecycle — click any step</div>
+    <div class="lifecycle-track">
+      <a class="lc-step">
+        <div class="lc-num">01</div>
+        <div class="lc-name">Intake</div>
+        <div class="lc-sub">Triage & fields</div>
+      </a>
+      <a class="lc-step">
+        <div class="lc-num">02</div>
+        <div class="lc-name">Customer Contact</div>
+        <div class="lc-sub">48-hr rule, RUT/ROW</div>
+      </a>
+      <a class="lc-step">
+        <div class="lc-num">03</div>
+        <div class="lc-name">Design</div>
+        <div class="lc-sub">PoleForeman, CUs, calcs</div>
+      </a>
+      <a class="lc-step">
+        <div class="lc-num">04</div>
+        <div class="lc-name">Permits / CIAC</div>
+        <div class="lc-sub">Billing & permits</div>
+      </a>
+      <a class="lc-step">
+        <div class="lc-num">05</div>
+        <div class="lc-name">Hold / Release</div>
+        <div class="lc-sub">Payment gates</div>
+      </a>
+      <a class="lc-step">
+        <div class="lc-num">06</div>
+        <div class="lc-name">Construction</div>
+        <div class="lc-sub">Green sheet, IN/T</div>
+      </a>
+      <a class="lc-step">
+        <div class="lc-num">07</div>
+        <div class="lc-name">Closeout</div>
+        <div class="lc-sub">As-built, invoice, purge</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- GO-BYS + STANDARDS -->
+  <div class="two-col">
+
+    <div>
+      <div class="section-label">Top Go-Bys</div>
+      <div class="link-list">
+        <div class="ll-header"><span class="ll-icon">⚡</span> One-page answers</div>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Customer Installation Standard</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Job Intake Checklist</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Site Visit Checklist</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Work Order (Maximo) Go-By</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Line Extension Policy</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Customer Conduit Responsibilities</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Underground / Pad-Mount SOP</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">OH to UG — Non-Residential</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">XFMR Pad Standards (UG-UPADT-POUR)</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">CIAC Guide</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Meter Socket Adapter Guidelines</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">DACT Reference</span><span class="ll-tag tag-new">new</span></a>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Standards & Policies</div>
+      <div class="link-list">
+        <div class="ll-header"><span class="ll-icon">📄</span> Canonical sources — don't duplicate</div>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">UG-UPADT-POUR (Pad Specs)</span><span class="ll-tag tag-pdf">pdf</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Meter Standard (Form 12S / 2S)</span><span class="ll-tag tag-pdf">pdf</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">CIAC / Extension Policy</span><span class="ll-tag tag-pdf">pdf</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Jackson Permitting Guide</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">R1 Construction Standards</span><span class="ll-tag tag-pdf">pdf</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">NESC Clearance Reference</span><span class="ll-tag tag-page">page</span></a>
+      </div>
+
+      <div style="margin-top: 16px;">
+        <div class="section-label">Things to Learn</div>
+        <div class="link-list">
+          <div class="ll-header"><span class="ll-icon">🎯</span> Skill-building pages</div>
+          <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">OH vs URD — Responsibilities</span><span class="ll-tag tag-wip">wip</span></a>
+          <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Conduit: Who Does What?</span><span class="ll-tag tag-wip">wip</span></a>
+          <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Temp Power Options (customer handout)</span><span class="ll-tag tag-wip">wip</span></a>
+          <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Metering: Form 12S / 2S</span><span class="ll-tag tag-wip">wip</span></a>
+          <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Padmount Quick Guide</span><span class="ll-tag tag-wip">wip</span></a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TOOLS -->
+  <div class="section-label">Tools & How-Tos</div>
+  <div class="tools-grid">
+    <a class="tool-card">
+      <div class="tool-emoji">🏗️</div>
+      <div class="tool-name">PoleForeman</div>
+      <div class="tool-desc">Hotkeys, workflow, NESC checks</div>
+    </a>
+    <a class="tool-card">
+      <div class="tool-emoji">📐</div>
+      <div class="tool-name">GDT / DIS</div>
+      <div class="tool-desc">Quick ops, design steps</div>
+    </a>
+    <a class="tool-card">
+      <div class="tool-emoji">🗂️</div>
+      <div class="tool-name">Maximo</div>
+      <div class="tool-desc">WO creation, statuses, logs</div>
+    </a>
+    <a class="tool-card">
+      <div class="tool-emoji">🔢</div>
+      <div class="tool-name">Diversity Calc</div>
+      <div class="tool-desc">Transformer sizing, voltage drop</div>
+    </a>
+    <a class="tool-card">
+      <div class="tool-emoji">💵</div>
+      <div class="tool-name">PeopleSoft / CIAC</div>
+      <div class="tool-desc">Customer billing setup</div>
+    </a>
+    <a class="tool-card">
+      <div class="tool-emoji">📋</div>
+      <div class="tool-name">Green Sheet</div>
+      <div class="tool-desc">Fields, checklist, example</div>
+    </a>
+    <a class="tool-card">
+      <div class="tool-emoji">🌐</div>
+      <div class="tool-name">Epoch / GIS</div>
+      <div class="tool-desc">Map & GPS tools</div>
+    </a>
+    <a class="tool-card">
+      <div class="tool-emoji">🎯</div>
+      <div class="tool-name">Jira Tracker</div>
+      <div class="tool-desc">Job management system</div>
+    </a>
+  </div>
+
+  <!-- CUSTOMER COMMS + PROCESS -->
+  <div class="two-col">
+    <div>
+      <div class="section-label">Customer Communications</div>
+      <div class="link-list">
+        <div class="ll-header"><span class="ll-icon">✉️</span> Templates & scripts</div>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Email Templates (all types)</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Temp Power — Customer Email</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Permit Request Template</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">12S Meter Instructions Email</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Phone Scripts & Escalation Language</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Project Timeline — Customer-Facing</span><span class="ll-tag tag-page">page</span></a>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">RACI, Process Maps & Metrics</div>
+      <div class="link-list">
+        <div class="ll-header"><span class="ll-icon">📊</span> Process & accountability</div>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Master RACI (Intake → Built)</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Sub-RACI: Permits / Padmount</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Sub-RACI: Construction Handoff</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">KPIs: Backlog / INTD / CIAC%</span><span class="ll-tag tag-page">page</span></a>
+        <a class="ll-item"><span class="ll-dot"></span><span class="ll-name">Schedule-to-Commit Tracker</span><span class="ll-tag tag-new">new</span></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ONBOARDING -->
+  <div class="section-label">Training & Onboarding</div>
+  <div class="onboarding-grid">
+    <a class="ob-card">
+      <div class="ob-period">30</div>
+      <div class="ob-title">First 30 Days</div>
+      <div class="ob-desc">Systems access, shadow jobs, tool orientation, introductions</div>
+    </a>
+    <a class="ob-card">
+      <div class="ob-period">60</div>
+      <div class="ob-title">Days 31–60</div>
+      <div class="ob-desc">First solo designs, CIAC basics, PoleForeman runs, customer calls</div>
+    </a>
+    <a class="ob-card">
+      <div class="ob-period">90</div>
+      <div class="ob-title">Days 61–90</div>
+      <div class="ob-desc">Full job ownership, commercial design, metrics check-in, qual card review</div>
+    </a>
+  </div>
+
+  <div class="notice">
+    <strong>📎 TEMPLATES LIBRARY</strong><br>
+    All copy-paste templates live in one place: Job Intake Form · RUT/ROW Wording · Design Review Email · Example Job Packet (complete) · Email Templates →
+    <a style="color: var(--amber); cursor: pointer;">Templates Library</a>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <span class="footer-text">Designer Hub · Entergy Mississippi Distribution</span>
+    <div class="footer-links">
+      <a class="footer-link">Suggest an Edit</a>
+      <a class="footer-link">Report Broken Link</a>
+      <a class="footer-link">Qual Card Summary</a>
+      <a class="footer-link">Training Videos</a>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
