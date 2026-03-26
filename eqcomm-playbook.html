@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EQCOMM Job — Designer Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2330;
+    --border: #2a3441;
+    --amber: #f0a500;
+    --amber-dim: #b87d00;
+    --amber-glow: rgba(240,165,0,0.10);
+    --amber-light: rgba(240,165,0,0.06);
+    --green: #3fb950;
+    --green-bg: rgba(63,185,80,0.08);
+    --blue: #388bfd;
+    --blue-bg: rgba(56,139,253,0.08);
+    --red: #f85149;
+    --red-bg: rgba(248,81,73,0.08);
+    --purple: #bc8cff;
+    --purple-bg: rgba(188,140,255,0.08);
+    --teal: #39d0d8;
+    --teal-bg: rgba(57,208,216,0.08);
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --text-dimmer: #4a5568;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Sora', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.12;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* BREADCRUMB */
+  .breadcrumb {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dimmer);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .breadcrumb a { color: var(--text-dim); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--amber); }
+  .breadcrumb span { color: var(--text-dimmer); }
+
+  /* HEADER */
+  .job-header {
+    margin-bottom: 32px;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .job-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 8px;
+  }
+
+  .job-title {
+    font-family: var(--mono);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+
+  .job-title span { color: var(--amber); }
+
+  .job-desc {
+    font-size: 14px;
+    color: var(--text-dim);
+    max-width: 600px;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  .job-meta {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .meta-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    color: var(--text-dim);
+  }
+
+  .meta-tag.green { color: var(--green); border-color: rgba(63,185,80,0.3); background: var(--green-bg); }
+  .meta-tag.amber { color: var(--amber); border-color: rgba(240,165,0,0.3); background: var(--amber-glow); }
+  .meta-tag.blue  { color: var(--blue);  border-color: rgba(56,139,253,0.3);  background: var(--blue-bg);  }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 12px;
+    transition: border-color 0.15s;
+  }
+
+  .card:hover { border-color: rgba(240,165,0,0.3); }
+
+  .card-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--amber);
+    margin-bottom: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  .card p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.65;
+  }
+
+  /* DECISION TREE */
+  .decision-tree {
+    margin-bottom: 32px;
+    animation: fadeUp 0.4s 0.2s ease both;
+  }
+
+  .dt-item {
+    display: flex;
+    gap: 0;
+    margin-bottom: 8px;
+    position: relative;
+  }
+
+  .dt-item::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    bottom: -8px;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .dt-item:last-child::before { display: none; }
+
+  .dt-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    position: relative;
+    z-index: 1;
+  }
+
+  .dt-content {
+    flex: 1;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-left: 12px;
+  }
+
+  .dt-condition {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+  }
+
+  .dt-action {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .dt-note {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    margin-top: 3px;
+  }
+
+  .dt-item.pass .dt-icon { border-color: rgba(63,185,80,0.4); color: var(--green); }
+  .dt-item.pass .dt-content { border-color: rgba(63,185,80,0.2); }
+  .dt-item.pass .dt-action { color: var(--green); }
+
+  .dt-item.warn .dt-icon { border-color: rgba(240,165,0,0.4); color: var(--amber); }
+  .dt-item.warn .dt-content { border-color: rgba(240,165,0,0.2); }
+  .dt-item.warn .dt-action { color: var(--amber); }
+
+  .dt-item.info .dt-icon { border-color: rgba(56,139,253,0.4); color: var(--blue); }
+  .dt-item.info .dt-content { border-color: rgba(56,139,253,0.2); }
+  .dt-item.info .dt-action { color: var(--blue); }
+
+  /* CU SELECTOR */
+  .cu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 10px;
+    margin-bottom: 32px;
+    animation: fadeUp 0.4s 0.25s ease both;
+  }
+
+  .cu-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cu-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 8px 0 0 8px;
+  }
+
+  .cu-card.verizon::before { background: var(--red); }
+  .cu-card.att::before { background: var(--blue); }
+  .cu-card.mesh::before { background: var(--green); }
+
+  .cu-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  .cu-card.verizon:hover { border-color: rgba(248,81,73,0.4); }
+  .cu-card.att:hover { border-color: rgba(56,139,253,0.4); }
+  .cu-card.mesh:hover { border-color: rgba(63,185,80,0.4); }
+
+  .cu-provider {
+    font-size: 10px;
+    font-family: var(--mono);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .cu-card.verizon .cu-provider { color: var(--red); }
+  .cu-card.att .cu-provider { color: var(--blue); }
+  .cu-card.mesh .cu-provider { color: var(--green); }
+
+  .cu-code {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .cu-desc {
+    font-size: 11.5px;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  .cu-always {
+    background: var(--bg2);
+    border: 1px solid rgba(240,165,0,0.3);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .cu-always-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .cu-always-content {}
+
+  .cu-always-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--amber);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  .cu-always-code {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .cu-always-note {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  /* WORKFLOW STEPS */
+  .workflow {
+    margin-bottom: 32px;
+    animation: fadeUp 0.4s 0.3s ease both;
+  }
+
+  .step {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 6px;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--amber);
+    background: var(--amber-glow);
+    border: 1px solid rgba(240,165,0,0.25);
+    border-radius: 4px;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .step-content {
+    flex: 1;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+  }
+
+  .step-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .step-detail {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  .step-detail code {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--amber);
+    background: var(--amber-light);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* NOTICE */
+  .notice {
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    line-height: 1.6;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .notice.green { background: var(--green-bg); border: 1px solid rgba(63,185,80,0.25); color: var(--text-dim); }
+  .notice.amber { background: var(--amber-glow); border: 1px solid rgba(240,165,0,0.25); color: var(--text-dim); }
+  .notice.red   { background: var(--red-bg);   border: 1px solid rgba(248,81,73,0.25);  color: var(--text-dim); }
+  .notice.blue  { background: var(--blue-bg);  border: 1px solid rgba(56,139,253,0.25); color: var(--text-dim); }
+
+  .notice-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .notice strong { color: var(--text); }
+
+  /* TWO COL */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 32px;
+    animation: fadeUp 0.4s 0.35s ease both;
+  }
+
+  @media (max-width: 580px) {
+    .two-col { grid-template-columns: 1fr; }
+    .cu-grid { grid-template-columns: 1fr; }
+    .job-title { font-size: 24px; }
+  }
+
+  /* QUICK REF TABLE */
+  .quick-ref {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 32px;
+    animation: fadeUp 0.4s 0.4s ease both;
+  }
+
+  .qr-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .qr-row:last-child { border-bottom: none; }
+
+  .qr-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    padding: 10px 14px;
+    background: var(--bg3);
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+  }
+
+  .qr-value {
+    font-size: 12.5px;
+    color: var(--text);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .pill.green { color: var(--green); border-color: rgba(63,185,80,0.3); background: var(--green-bg); }
+  .pill.amber { color: var(--amber); border-color: rgba(240,165,0,0.3); background: var(--amber-glow); }
+  .pill.red   { color: var(--red);   border-color: rgba(248,81,73,0.3);  background: var(--red-bg); }
+  .pill.blue  { color: var(--blue);  border-color: rgba(56,139,253,0.3);  background: var(--blue-bg); }
+
+  /* BACK LINK */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    text-decoration: none;
+    margin-bottom: 24px;
+    transition: color 0.12s;
+  }
+  .back-link:hover { color: var(--amber); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .header-anim { animation: fadeUp 0.4s ease both; }
+  .section-anim-1 { animation: fadeUp 0.4s 0.1s ease both; }
+  .section-anim-2 { animation: fadeUp 0.4s 0.2s ease both; }
+  .section-anim-3 { animation: fadeUp 0.4s 0.3s ease both; }
+  .section-anim-4 { animation: fadeUp 0.4s 0.4s ease both; }
+
+  /* FOOTER */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .footer-text {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dimmer);
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a href="index.html">Designer Hub</a>
+    <span>/</span>
+    <a href="#">Job Types</a>
+    <span>/</span>
+    <span style="color: var(--text-dim)">EQCOMM</span>
+  </div>
+
+  <!-- HEADER -->
+  <div class="job-header header-anim">
+    <div class="job-eyebrow">⚡ Specialty Job — Internal Assignment</div>
+    <h1 class="job-title">EQCOMM — <span>AMI Access Point</span> Install</h1>
+    <p class="job-desc">Internal jobs to install AMI (Advanced Metering Infrastructure) communication access points or relay devices on existing poles. Assigned by work management — not customer-generated. Fast, simple, low cost. Usually self-approvable.</p>
+    <div class="job-meta">
+      <span class="meta-tag green">● Internal Job</span>
+      <span class="meta-tag amber">No Customer Contact</span>
+      <span class="meta-tag blue">Self-Approvable (~$800)</span>
+      <span class="meta-tag">No Barricade Needed</span>
+      <span class="meta-tag">WO Pre-Created</span>
+    </div>
+  </div>
+
+  <!-- WHAT IS AN EQCOMM JOB -->
+  <div class="section-anim-1">
+    <div class="section-label">What Is This Job</div>
+    <div class="card" style="margin-bottom: 24px;">
+      <div class="card-title">BACKGROUND</div>
+      <p>EQCOMM (Equipment Communication) jobs install AMI communication nodes on the distribution system. AP stands for Access Point. These devices connect to Entergy's smart grid communication network — allowing meters and field equipment to communicate back to operations systems. Three types exist: Verizon-networked APs, AT&T-networked APs, and Entergy's own mesh network relays. The job details in Maximo will tell you which pole and which device type. You fill in the existing WO — you do not create one.</p>
+    </div>
+  </div>
+
+  <!-- QUICK REFERENCE -->
+  <div class="section-anim-1">
+    <div class="section-label">Quick Reference</div>
+    <div class="quick-ref" style="margin-bottom: 24px;">
+      <div class="qr-row">
+        <div class="qr-label">JOB SOURCE</div>
+        <div class="qr-value">Internal — Work Management (not customer call center)</div>
+      </div>
+      <div class="qr-row">
+        <div class="qr-label">WO STATUS</div>
+        <div class="qr-value">Pre-created — you fill in and route. Do not create a new WO.</div>
+      </div>
+      <div class="qr-row">
+        <div class="qr-label">POLE INFO</div>
+        <div class="qr-value">Found in the Maximo WO description/details — includes which pole to use</div>
+      </div>
+      <div class="qr-row">
+        <div class="qr-label">DEVICE TYPES</div>
+        <div class="qr-value">
+          <span class="pill red">Verizon AP</span>
+          <span class="pill blue">AT&T AP</span>
+          <span class="pill green">Mesh Relay</span>
+        </div>
+      </div>
+      <div class="qr-row">
+        <div class="qr-label">GDT NOTE</div>
+        <div class="qr-value">No icon or symbol in GDT — place CU directly on the pole</div>
+      </div>
+      <div class="qr-row">
+        <div class="qr-label">BARRICADE</div>
+        <div class="qr-value"><span style="color: var(--red);">✗ Not required</span> &nbsp;— Tailboard only</div>
+      </div>
+      <div class="qr-row">
+        <div class="qr-label">APPROVAL</div>
+        <div class="qr-value"><span style="color: var(--green);">✓ Self-approvable</span> &nbsp;— typically ~$800, under approval threshold</div>
+      </div>
+      <div class="qr-row">
+        <div class="qr-label">CIAC</div>
+        <div class="qr-value"><span style="color: var(--green);">✗ Not applicable</span> &nbsp;— internal job, no customer billing</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DECISION TREE -->
+  <div class="decision-tree">
+    <div class="section-label">Transformer Decision Tree</div>
+    <p style="font-size: 12.5px; color: var(--text-dim); margin-bottom: 16px;">The AP needs power. Before designing, look up the assigned pole in GDT/Epoch and answer this question: <strong style="color: var(--text);">Is there a transformer on or near this pole?</strong></p>
+
+    <div class="dt-item pass">
+      <div class="dt-icon">✓</div>
+      <div class="dt-content">
+        <div class="dt-condition">IF — Transformer is on the assigned pole</div>
+        <div class="dt-action">Good to go. Install AP on that pole.</div>
+        <div class="dt-note">No additional design work needed. Place CU on pole, add tailboard, build sketch, send to construction.</div>
+      </div>
+    </div>
+
+    <div class="dt-item warn">
+      <div class="dt-icon">~</div>
+      <div class="dt-content">
+        <div class="dt-condition">IF — No transformer on pole, but one is 1–2 spans away</div>
+        <div class="dt-action">Run triplex to the assigned pole.</div>
+        <div class="dt-note">Design a secondary triplex run (A10T) from the nearby transformer to the assigned pole. Add appropriate secondary CUs for the run plus the AP CU on the assigned pole.</div>
+      </div>
+    </div>
+
+    <div class="dt-item info">
+      <div class="dt-icon">+</div>
+      <div class="dt-content">
+        <div class="dt-condition">IF — No transformer anywhere nearby in the area</div>
+        <div class="dt-action">Install a new transformer on or near the assigned pole.</div>
+        <div class="dt-note">Size transformer appropriately for the load (small single-phase — TS25-8 or similar). Add transformer CU, secondary CUs as needed, and AP CU. This scenario is less common — confirm with supervisor if unsure.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CU SELECTION -->
+  <div class="section-anim-2">
+    <div class="section-label">CU Selection — Pick One Based on Job Type</div>
+    <p style="font-size: 12.5px; color: var(--text-dim); margin-bottom: 14px;">The Maximo WO description will tell you which device type. Pick the matching CU. There is no visual icon in GDT — just place the CU on the pole.</p>
+
+    <div class="cu-grid">
+      <div class="cu-card verizon">
+        <div class="cu-provider">Verizon Network</div>
+        <div class="cu-code">AMI-AP-VERIZON</div>
+        <div class="cu-desc">Verizon-networked AMI access point. WO description will reference Verizon or contain Verizon-specific device info.</div>
+      </div>
+      <div class="cu-card att">
+        <div class="cu-provider">AT&T Network</div>
+        <div class="cu-code">AMI-AP-ATT</div>
+        <div class="cu-desc">AT&T-networked AMI access point. WO description will reference AT&T or contain AT&T-specific device info.</div>
+      </div>
+      <div class="cu-card mesh">
+        <div class="cu-provider">Entergy Mesh / Regular</div>
+        <div class="cu-code">AMI-RELAY</div>
+        <div class="cu-desc">Entergy's own mesh network relay. WO will reference "regular" or "mesh." Most common internal AMI job type.</div>
+      </div>
+    </div>
+
+    <div class="cu-always">
+      <div class="cu-always-icon">📋</div>
+      <div class="cu-always-content">
+        <div class="cu-always-label">Always Add — Every EQCOMM Job</div>
+        <div class="cu-always-code">TAILBOARD-OH</div>
+        <div class="cu-always-note">Required on all energized overhead work. No barricade CU needed on these jobs — tailboard only.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORKFLOW -->
+  <div class="workflow">
+    <div class="section-label">Step-by-Step Workflow</div>
+
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-content">
+        <div class="step-title">Open WO in Maximo</div>
+        <div class="step-detail">WO is pre-created and assigned to you. Open it and read the description carefully — it will tell you which pole to use and which AMI device type is being installed. Fill in designer field, set to <code>WDESIGN</code>.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-content">
+        <div class="step-title">Look Up the Pole in GDT / Epoch</div>
+        <div class="step-detail">Navigate to the DLOC. Find the assigned pole. Check for a transformer — is it on the pole? On a nearby pole? Nowhere close? This determines your design path. Set GDT to Design status.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-content">
+        <div class="step-title">Identify Upstream Device</div>
+        <div class="step-detail">Find and capture the upstream device in Maximo. Note feeder, G-zero, and upstream device details. This is standard for every job regardless of type.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-content">
+        <div class="step-title">Apply the Transformer Decision</div>
+        <div class="step-detail">Transformer on pole → proceed. Transformer 1–2 spans away → design triplex run using <code>A10T</code> secondary and appropriate secondary dead end CUs. No transformer in area → add transformer CU (typically <code>TS25-8</code>).</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">05</div>
+      <div class="step-content">
+        <div class="step-title">Place CU on the Pole in GDT</div>
+        <div class="step-detail">Place <code>AMI-AP-VERIZON</code>, <code>AMI-AP-ATT</code>, or <code>AMI-RELAY</code> directly on the assigned pole. There is no icon or symbol for these in GDT — just the CU placed on the pole. Add <code>TAILBOARD-OH</code>. Save.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">06</div>
+      <div class="step-content">
+        <div class="step-title">Send Design, Run Estimation</div>
+        <div class="step-detail">Send design from GDT to Maximo. Run estimation. Check costs tab. These jobs typically run around $800 — well under the self-approval threshold.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">07</div>
+      <div class="step-content">
+        <div class="step-title">Complete Sketch and Vicinity Map</div>
+        <div class="step-detail">Build job sketch showing pole location, upstream device, and AP placement. Complete vicinity map. Attach photos if applicable. These are still required even on simple jobs.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">08</div>
+      <div class="step-content">
+        <div class="step-title">Run Reports and Complete Log</div>
+        <div class="step-detail">Run standard reports: Material Summary, Job Cost Summary, As-Built. Complete WO log: Purpose and Necessity, Capital vs O&M designation, Work Description. Import all files into Maximo.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">09</div>
+      <div class="step-content">
+        <div class="step-title">Self-Approve and Send to Construction</div>
+        <div class="step-detail">Because cost is typically ~$800, you can approve this yourself — no supervisor routing required. Perform acceptance, approve in Maximo, set GDT to Approved. Deliver job packet to construction.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- NOTICES -->
+  <div class="section-anim-3">
+    <div class="section-label">Things to Know</div>
+
+    <div class="notice green">
+      <span class="notice-icon">✓</span>
+      <div><strong>Self-approvable.</strong> These jobs typically cost around $800. You do not need to route to your supervisor for approval — you can perform acceptance and approve yourself in Maximo.</div>
+    </div>
+
+    <div class="notice amber">
+      <span class="notice-icon">⚠</span>
+      <div><strong>No GDT icon for AMI CUs.</strong> There is no visual symbol or icon to place in GDT for these devices. You simply place the CU code on the pole. Do not spend time looking for a symbol that does not exist.</div>
+    </div>
+
+    <div class="notice amber">
+      <span class="notice-icon">⚠</span>
+      <div><strong>No barricade CU needed.</strong> Unlike most energized OH work, EQCOMM jobs do not require <code>TRUCK-BARRICADE-OH</code>. Tailboard only. This is one of the few job types where this applies.</div>
+    </div>
+
+    <div class="notice blue">
+      <span class="notice-icon">ℹ</span>
+      <div><strong>WO is pre-created.</strong> You do not create a new work order for EQCOMM jobs. One is assigned and waiting for you. Open it, fill it in, and route it.</div>
+    </div>
+
+    <div class="notice blue">
+      <span class="notice-icon">ℹ</span>
+      <div><strong>Check the WO description carefully.</strong> The pole number and AMI device type are both in the Maximo WO description. Read it before opening GDT — it tells you everything you need to start the design.</div>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 32px;"></div>
+
+  <!-- COMMON MISTAKES -->
+  <div class="section-anim-4">
+    <div class="section-label">Common Mistakes</div>
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">✗ ADDING BARRICADE CU</div>
+        <p>These jobs do not require TRUCK-BARRICADE-OH. Tailboard only. Adding the barricade CU inflates cost unnecessarily.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">✗ ROUTING FOR APPROVAL UNNECESSARILY</div>
+        <p>At ~$800 these are self-approvable. No need to wait for supervisor approval — you can approve yourself and move straight to construction.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">✗ WRONG AMI CU</div>
+        <p>Three CU options exist. Read the WO description to identify Verizon, AT&T, or mesh before placing your CU. Wrong CU = wrong material ordered.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">✗ SKIPPING TRANSFORMER CHECK</div>
+        <p>The AP needs power. Always check whether a transformer is on or near the assigned pole before finalizing your design. Missing this step means a job that cannot be built.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <span class="footer-text">Designer Hub · Entergy Mississippi Distribution · EQCOMM Playbook</span>
+    <span class="footer-text">Last updated: 2026</span>
+  </div>
+
+</div>
+</body>
+</html>
